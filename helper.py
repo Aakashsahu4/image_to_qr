@@ -1,3 +1,9 @@
+"""External Imports"""
+from django.core.validators import FileExtensionValidator
+from django.core.exceptions import ValidationError
+from django.core.files.images import get_image_dimensions
+
+"""Internal Imports"""
 import keys
 
 class CustomResponses():
@@ -45,9 +51,6 @@ class CustomResponses():
 		}
 		return Response
 
-from django.core.validators import FileExtensionValidator
-from django.core.exceptions import ValidationError
-from django.core.files.images import get_image_dimensions
 
 def validate_image(image):
     allowed_extensions = ['jpg', 'jpeg', 'png']

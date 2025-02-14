@@ -10,9 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
-    # def create(self, validated_data):
-    #     user = OwnUser.objects.create_user(**validated_data)
-    #     return user
 
 class UploadedImageSerializer(serializers.ModelSerializer):
     class Meta:
