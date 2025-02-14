@@ -40,6 +40,11 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        #message {
+            font-weight: bold;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -49,29 +54,45 @@
         <input type="text" id="signup-username" placeholder="Username">
         <input type="password" id="signup-password" placeholder="Password">
         <button onclick="signup()">Sign Up</button>
-        <p>Already have an account? <a href="http://127.0.0.1:8001/uploader/login/">Login</a></p>
+        <p>Already have an account? <a href="#" id="login-link">Login</a></p>
+        <div id="message"></div>
     </div>
 
     <script>
-        function signup() {
+        const BASE_URL = window.location.origin + "/uploader";
+
+        async function signup() {
             let username = document.getElementById("signup-username").value;
             let password = document.getElementById("signup-password").value;
+            let messageDiv = document.getElementById("message");
 
-            fetch('http://127.0.0.1:8001/uploader/api/signup/', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({username: username, password: password})
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
+            if (!username || !password) {
+                messageDiv.textContent = "Please enter both username and password!";
+                return;
+            }
+
+            try {
+                let response = await fetch(`${BASE_URL}/api/signup/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                let data = await response.json();
+
+                if (response.ok) {
                     alert("Signup successful! Please log in.");
-                    window.location.href = "http://127.0.0.1:8001/uploader/login/";
+                    window.location.href = `${BASE_URL}/login.html`;
                 } else {
-                    alert("Signup failed!");
+                    messageDiv.textContent = data.message || "Signup failed!";
                 }
-            });
+            } catch (error) {
+                console.error("Signup error:", error);
+                messageDiv.textContent = "An error occurred. Please try again.";
+            }
         }
+
+        document.getElementById("login-link").href = `${BASE_URL}/login.html`;
     </script>
 
 </body>
