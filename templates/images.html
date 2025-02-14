@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        img {
+            margin: 10px;
+            width: 50px;
+            height: 50%;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #c82333;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            width: 50%;
+        }
+
+        #gallery {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .gallery-img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .row:nth-child(odd) .gallery-img {
+            width: 45%;
+        }
+
+        .row:nth-child(even) .gallery-img {
+            width: 90%;
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <h2>Image Gallery</h2>
+    <div id="gallery"></div>
+    <button onclick="logout()">Logout</button>
+    <button onclick="back()">Back</button>
+
+    <script>
+        function loadGallery() {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+        console.error("No token found. User must log in.");
+        return;
+    }
+
+    fetch('http://127.0.0.1:8001/uploader/api/gallery/', {
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error("Failed to fetch gallery. Please check authentication.");
+        }
+        return response.json();
+    })
+    .then(images => {
+        let gallery = document.getElementById("gallery");
+        gallery.innerHTML = "";
+
+        if (images.length === 0) {
+            gallery.innerHTML = "<p>No images uploaded.</p>";
+            return;
+        }
+
+        let firstImageType = images[0].image_type;
+        let isPortraitFirst = firstImageType === "portrait";
+        let row = document.createElement("div");
+        row.classList.add("row");
+
+        images.forEach((image, index) => {
+            let imgElement = document.createElement("img");
+            imgElement.src = image.qr_code_url || image.image;
+            imgElement.alt = "QR Code";
+            imgElement.classList.add("gallery-img");
+
+            row.appendChild(imgElement);
+
+            if (isPortraitFirst) {
+                if (index % 3 === 1) {
+                    gallery.appendChild(row);
+                    row = document.createElement("div");
+                    row.classList.add("row");
+                } else if (index % 3 === 2) {
+                    gallery.appendChild(row);
+                    row = document.createElement("div");
+                    row.classList.add("row");
+                }
+            } else { 
+                if (index % 3 === 0) {
+                    gallery.appendChild(row);
+                    row = document.createElement("div");
+                    row.classList.add("row");
+                } else if (index % 3 === 2) {
+                    gallery.appendChild(row);
+                    row = document.createElement("div");
+                    row.classList.add("row");
+                }
+            }
+        });
+
+        if (row.children.length > 0) {
+            gallery.appendChild(row);
+        }
+    })
+    .catch(error => console.error("Error loading gallery:", error));
+}
+
+
+
+        function logout() {
+            {
+                localStorage.removeItem("token");
+                window.location.href = "http://127.0.0.1:8001/uploader/login/";
+            };
+        }
+
+        
+        function back() {
+            {
+                window.location.href = "http://127.0.0.1:8001/uploader/upload/";
+            };
+        }
+
+        document.addEventListener("DOMContentLoaded", loadGallery);
+    </script>
+
+</body>
+</html>

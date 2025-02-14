@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 400px;
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        select, input, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        
+        button:hover {
+            background-color: #218838;
+        }
+
+        .button2 {
+            background-color:  #882121;
+            color: white;
+            cursor: pointer;
+            width: 45%;
+        }
+        
+        .button2:hover {
+            background-color:  #882121;
+        }
+
+        #qr-code {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Upload Image</h2>
+        <select id="image-type">
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+        </select>
+        <input type="file" id="image-file">
+        <button onclick="uploadImage()" >Upload</button>
+        <p><a href="http://127.0.0.1:8001/uploader/images/">Go to Gallery</a></p>
+        <button onclick="logout()" class="button2">Log Out</button>
+        <img id="qr-code" src="" alt="QR Code" style="display:none;">
+    </div>
+
+    <script>
+
+        async function uploadImage() {
+            let fileInput = document.getElementById("image-file");
+            let file = fileInput.files[0];
+            let imageType = document.getElementById("image-type").value;
+            let token = localStorage.getItem("access_token");
+
+            console.log("Retrieved Token:", token);
+
+            if (!file) {
+                alert("Please select an image.");
+                return;
+            }
+
+            if (!token) {
+                alert("Authentication error: No token found. Please log in.");
+                window.location.href = "http://127.0.0.1:8001/uploader/login/";
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("image", file);
+            formData.append("image_type", imageType);
+
+            try {
+                let response = await fetch('http://127.0.0.1:8001/uploader/api/upload/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                let data = await response.json();
+                console.log("Upload Response:", data);
+
+                if (response.ok) {
+                    alert("Image uploaded successfully!");
+                } else {
+                    alert(`Upload failed: ${data.message || response.status}`);
+                }
+            } catch (error) {
+                console.error("Upload error:", error);
+                alert("Upload failed! Please try again.");
+            }
+        }
+
+        function logout() {
+            {
+                localStorage.removeItem("token");
+                window.location.href = "http://127.0.0.1:8001/uploader/login/";
+            };
+        }
+
+    </script>
+
+</body>
+</html>

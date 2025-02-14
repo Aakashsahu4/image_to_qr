@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 300px;
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .signupbtn {
+            background-color: #ef1010;
+            color: white;
+            cursor: pointer;
+            width: 50%;
+        }
+
+        .signupbtn:hover {
+            background-color: #885421;
+        }
+        #message {
+            font-weight: bold;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <button onclick="signup()" class="signupbtn">Sign Up</button>
+        <div id="message" class="message"></div>
+
+    </div>
+
+    <script>
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+
+            const payload = { username, password };
+
+            try {
+                const response = await fetch('http://127.0.0.1:8001/uploader/api/login/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                console.log("Login Response:", data);
+
+                if (response.ok) {
+                    messageDiv.textContent = "Login successful!";
+                    messageDiv.className = "message success";
+
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('refresh_token', data.refresh_token);
+                    
+                    console.log("Stored Token:", localStorage.getItem('access_token'));
+                    window.location.href = 'http://127.0.0.1:8001/uploader/upload/';
+                } else {
+                    messageDiv.textContent = data.message || "Invalid credentials!";
+                    messageDiv.className = "message error";
+                    alert(data.message || "Invalid credentials!");
+                }
+            } catch (error) {
+                console.error("Error logging in:", error);
+                alert("An error occurred. Please try again.");
+            }
+        }
+
+        function signup() {
+            window.location.href = "http://127.0.0.1:8001/uploader/signup/";
+        }
+
+    </script>
+
+</body>
+</html>
