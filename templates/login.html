@@ -101,7 +101,7 @@
                     localStorage.setItem('access_token', data.access_token);
                     localStorage.setItem('refresh_token', data.refresh_token);
 
-                    window.location.href = `${BASE_URL}/upload.html`;
+                    window.location.href = `${BASE_URL}/upload/`;
                 } else {
                     messageDiv.textContent = data.message || "Invalid credentials!";
                     alert(data.message || "Invalid credentials!");
@@ -113,7 +113,7 @@
         }
 
         function signup() {
-            window.location.href = `${BASE_URL}/signup.html`;
+            window.location.href = `${BASE_URL}/signup`;
         }
     </script>
 

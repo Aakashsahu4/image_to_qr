@@ -81,7 +81,7 @@
             const token = localStorage.getItem("access_token");
             if (!token) {
                 console.error("No token found. User must log in.");
-                window.location.href = `${BASE_URL}/login.html`;
+                window.location.href = `${BASE_URL}/login/`;
                 return;
             }
 
@@ -140,11 +140,11 @@
 
         function logout() {
             localStorage.removeItem("access_token");
-            window.location.href = `${BASE_URL}/login.html`;
+            window.location.href = `${BASE_URL}/login/`;
         }
 
         function back() {
-            window.location.href = `${BASE_URL}/upload.html`;
+            window.location.href = `${BASE_URL}/upload/`;
         }
 
         document.addEventListener("DOMContentLoaded", loadGallery);

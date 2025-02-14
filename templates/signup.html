@@ -82,7 +82,7 @@
 
                 if (response.ok) {
                     alert("Signup successful! Please log in.");
-                    window.location.href = `${BASE_URL}/login.html`;
+                    window.location.href = `${BASE_URL}/login/`;
                 } else {
                     messageDiv.textContent = data.message || "Signup failed!";
                 }
@@ -92,7 +92,7 @@
             }
         }
 
-        document.getElementById("login-link").href = `${BASE_URL}/login.html`;
+        document.getElementById("login-link").href = `${BASE_URL}/login/`;
     </script>
 
 </body>
